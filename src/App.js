@@ -19,36 +19,47 @@ function App() {
   const[modal, setModal] = useState(false);
 
 
-  useEffect(() => {
-      fetch(BASE_URL+`${query}${page}`)
-          .then((res) => res.json())
-          .then((data) => {
-              console.log(data)
-              setPosts(data.data);
-              setPageQty(data.last_page);
-              console.log(BASE_URL)
-          })
-  }, [query,page,post]);
+    try {
+        useEffect(() => {
+            fetch(BASE_URL+`${query}${page}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data)
+                    setPosts(data.data);
+                    setPageQty(data.last_page);
+                    console.log(BASE_URL)
+                })
+        }, [query,page,post]);
+    }catch (e ){
+        alert(e)
+    }
 
 
   const setNewPost = (props) => {
       setPost({...post, props});
 
-      axios.post(BaseURL, props)
-          .then((data) => {
-              console.log(data);
-          });
-      setModal(true);
+      try {
+          if (axios.post(BaseURL, props)
+              .then((data) => {
+                  console.log(data);
+              })) {
+              setModal(true);
+              setTimeout(()=>{setModal(false)}, 3000);
 
-      setTimeout(()=>{setModal(false)}, 3000);
+          }
 
-      fetch(BASE_URL+`${query}${page}`)
-          .then((res) => res.json())
-          .then((data) => {
-              console.log(data)
-              setPosts(data.data);
-              setPageQty(data.last_page);
-          });
+          fetch(BASE_URL+`${query}${page}`)
+              .then((res) => res.json())
+              .then((data) => {
+                  console.log(data)
+                  setPosts(data.data);
+                  setPageQty(data.last_page);
+              });
+
+
+      }catch (e){
+          alert(e)
+      }
   }
 
   const setNewPage = (props) => {
